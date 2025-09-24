@@ -28,15 +28,18 @@ struct mangaryApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
+            Group {
                 if authManager.isAuthenticated {
                     MainTabView()
                 } else {
-                    HomeView()
+                    NavigationStack {
+                        HomeView()
+                    }
                 }
             }
-            .id(authManager.isAuthenticated)
             .environment(authManager)
+           
+         
         }
         .modelContainer(sharedModelContainer)
     }
