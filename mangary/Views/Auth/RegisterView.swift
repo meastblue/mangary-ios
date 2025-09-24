@@ -23,7 +23,6 @@ struct RegisterView: View {
     @State private var alertTitle = "Erreur"
     @State private var navigateToRegistrationSuccess = false
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var authManager: AuthenticationManager
 
     var body: some View {
         ZStack {
@@ -210,7 +209,6 @@ struct RegisterView: View {
         .navigationDestination(isPresented: $navigateToRegistrationSuccess) {
             RegistrationSuccessView(email: email)
                 .navigationBarBackButtonHidden(true)
-                .environmentObject(authManager)
         }
         .alert(alertTitle, isPresented: $showingAlert) {
             Button("OK", role: .cancel) { }

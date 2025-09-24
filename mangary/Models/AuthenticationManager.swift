@@ -7,11 +7,10 @@
 
 import Foundation
 import SwiftUI
-import Combine
 
-// Authentication Manager to handle auth state
-final class AuthenticationManager: ObservableObject {
-    @Published var isAuthenticated = true
+@Observable
+final class AuthenticationManager {
+    var isAuthenticated = false 
 
     func setAuthenticated(_ authenticated: Bool) {
         isAuthenticated = authenticated

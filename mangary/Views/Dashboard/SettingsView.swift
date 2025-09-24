@@ -12,7 +12,7 @@ struct SettingsView: View {
     @State private var darkModeEnabled = false
     @State private var downloadQuality = 1
     @State private var autoDownload = false
-    @EnvironmentObject private var authManager: AuthenticationManager
+    @Environment(AuthenticationManager.self) private var authManager
 
     let downloadQualityOptions = ["Faible", "Moyenne", "Haute"]
 

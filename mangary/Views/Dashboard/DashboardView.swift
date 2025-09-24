@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct DashboardView: View {
-    @EnvironmentObject private var authManager: AuthenticationManager
 
     var body: some View {
         ZStack {

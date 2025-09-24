@@ -12,31 +12,37 @@ enum MainTabs {
 }
 
 struct MainTabView: View {
-    @EnvironmentObject private var authManager: AuthenticationManager
     @State private var selectedTab: MainTabs = .dashboard
-    @State private var searchText = ""
+
 
     var body: some View {
         TabView(selection: $selectedTab) {
             Tab("Home", systemImage: "house.fill", value: .dashboard) {
-                DashboardView()
-                    .environmentObject(authManager)
+                NavigationStack {
+                    DashboardView()
+                }
             }
 
             Tab("Bookmarks", systemImage: "bookmark.fill", value: .bookmark) {
-                BookmarkView()
+                NavigationStack {
+                    BookmarkView()
+                }
             }
 
             Tab("Settings", systemImage: "gear", value: .settings) {
-                SettingsView()
-                    .environmentObject(authManager)
+                NavigationStack {
+                    SettingsView()
+                }
             }
 
             Tab(value: .search, role: .search) {
-                SearchContentView(searchText: $searchText)
+                NavigationStack {
+                    SearchContentView()
+                }
+                 
             }
         }
-        .searchable(text: $searchText, prompt: "Rechercher un manga...")
+   
     }
 }
 
