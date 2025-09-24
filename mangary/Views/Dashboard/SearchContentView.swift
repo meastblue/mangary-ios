@@ -9,32 +9,32 @@ import SwiftUI
 
 struct SearchContentView: View {
     @Binding var searchText: String
-
+    
     private let allMangas = [
         "Naruto", "One Piece", "Attack on Titan", "Dragon Ball",
         "Death Note", "My Hero Academia", "Demon Slayer",
         "Tokyo Ghoul", "Fullmetal Alchemist", "Hunter x Hunter"
     ]
-
+    
     private var filteredResults: [String] {
         if searchText.isEmpty {
             return allMangas
         }
         return allMangas.filter { $0.localizedCaseInsensitiveContains(searchText) }
     }
-
+    
     var body: some View {
-        NavigationStack {
-            ZStack {
-                AppBackground()
-
-                VStack(spacing: 20) {
-                    HeaderView(
-                        profileAction: {
-                            // Profile action
-                        }
-                    )
-
+        
+        ZStack {
+            AppBackground()
+            
+            VStack(spacing: 20) {
+                HeaderView(
+                    profileAction: {
+                        // Profile action
+                    }
+                )
+                
                 if searchText.isEmpty {
                     // État vide - suggestions
                     VStack(spacing: 30) {
@@ -49,13 +49,13 @@ struct SearchContentView: View {
                                             endPoint: .bottom
                                         )
                                     )
-
+                                
                                 VStack(spacing: 10) {
                                     Text("Découvrez des mangas")
                                         .font(.title2)
                                         .fontWeight(.bold)
                                         .foregroundColor(.primary)
-
+                                    
                                     Text("Commencez à taper pour rechercher")
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
@@ -66,12 +66,12 @@ struct SearchContentView: View {
                             .padding(.vertical, 40)
                         }
                         .padding(.horizontal, 30)
-
+                        
                         // Suggestions populaires
                         VStack(alignment: .leading, spacing: 15) {
                             SectionHeader(title: "Populaires")
                                 .padding(.horizontal, 10)
-
+                            
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 15) {
                                     ForEach(Array(allMangas.prefix(5).enumerated()), id: \.offset) { index, manga in
@@ -81,7 +81,7 @@ struct SearchContentView: View {
                                                     .fill(Color.gray.opacity(0.3))
                                                     .frame(width: 100, height: 140)
                                                     .cornerRadius(8)
-
+                                                
                                                 Text(manga)
                                                     .font(.caption)
                                                     .fontWeight(.medium)
@@ -111,18 +111,18 @@ struct SearchContentView: View {
                                             .fill(Color.gray.opacity(0.3))
                                             .frame(width: 60, height: 80)
                                             .cornerRadius(8)
-
+                                        
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(filteredResults[index])
                                                 .font(.headline)
                                                 .foregroundColor(.primary)
-
+                                            
                                             Text("Description du manga...")
                                                 .font(.subheadline)
                                                 .foregroundColor(.secondary)
                                                 .lineLimit(2)
                                         }
-
+                                        
                                         Spacer()
                                     }
                                     .padding()
@@ -133,13 +133,13 @@ struct SearchContentView: View {
                         .padding(.top, 20)
                     }
                 }
-                }
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
         }
+        .navigationTitle("")
+        .navigationBarHidden(true)
     }
 }
+
 
 #Preview {
     SearchContentView(searchText: .constant(""))

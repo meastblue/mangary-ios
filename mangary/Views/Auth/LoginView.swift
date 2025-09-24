@@ -19,7 +19,7 @@ struct LoginView: View {
     @State private var navigateToEmailSent = false
     @State private var resetEmail = ""
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var authManager: AuthenticationManager
+    @Environment(AuthenticationManager.self) private var authManager
 
     var body: some View {
         ZStack {
@@ -225,7 +225,6 @@ struct LoginView: View {
         .navigationDestination(isPresented: $navigateToRegister) {
             RegisterView()
                 .navigationBarBackButtonHidden(true)
-                .environmentObject(authManager)
         }
         .navigationDestination(isPresented: $navigateToForgotPassword) {
             ForgotPasswordView(onEmailSent: { email in
@@ -247,7 +246,6 @@ struct LoginView: View {
 
     private func loginUser() {
         isLoading = true
-
         // Simulate API call
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             isLoading = false

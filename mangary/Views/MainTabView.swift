@@ -12,7 +12,6 @@ enum MainTabs {
 }
 
 struct MainTabView: View {
-    @EnvironmentObject private var authManager: AuthenticationManager
     @State private var selectedTab: MainTabs = .dashboard
     @State private var searchText = ""
 
@@ -20,7 +19,6 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             Tab("Home", systemImage: "house.fill", value: .dashboard) {
                 DashboardView()
-                    .environmentObject(authManager)
             }
 
             Tab("Bookmarks", systemImage: "bookmark.fill", value: .bookmark) {
@@ -29,7 +27,6 @@ struct MainTabView: View {
 
             Tab("Settings", systemImage: "gear", value: .settings) {
                 SettingsView()
-                    .environmentObject(authManager)
             }
 
             Tab(value: .search, role: .search) {

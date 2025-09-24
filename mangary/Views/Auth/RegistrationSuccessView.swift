@@ -11,7 +11,7 @@ struct RegistrationSuccessView: View {
     let email: String
     @Environment(\.dismiss) private var dismiss
     @State private var animationFinished = false
-    @EnvironmentObject private var authManager: AuthenticationManager
+    @Environment(AuthenticationManager.self) private var authManager
 
     var body: some View {
         ZStack {
