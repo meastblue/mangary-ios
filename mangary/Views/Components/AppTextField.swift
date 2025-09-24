@@ -7,12 +7,25 @@
 
 import SwiftUI
 
+enum KeyboardType {
+    case `default`
+    case emailAddress
+    case numberPad
+    case phonePad
+    case URL
+    case namePhonePad
+    case twitter
+    case webSearch
+    case numbersAndPunctuation
+    case decimalPad
+}
+
 struct AppTextField: View {
     let placeholder: String
     @Binding var text: String
     var icon: String? = nil
     var isSecure: Bool = false
-    var keyboardType: UIKeyboardType = .default
+    var keyboardType: KeyboardType = .default
     var autocapitalization: TextInputAutocapitalization = .sentences
     var hasError: Bool = false
     var showToggle: Bool = false
@@ -23,7 +36,7 @@ struct AppTextField: View {
         text: Binding<String>,
         icon: String? = nil,
         isSecure: Bool = false,
-        keyboardType: UIKeyboardType = .default,
+        keyboardType: KeyboardType = .default,
         autocapitalization: TextInputAutocapitalization = .sentences,
         hasError: Bool = false,
         showToggle: Bool = false,
@@ -52,12 +65,10 @@ struct AppTextField: View {
             // Text field
             if isSecure && !isSecureVisible {
                 SecureField(placeholder, text: $text)
-                    .keyboardType(keyboardType)
                     .textInputAutocapitalization(autocapitalization)
                     .foregroundColor(.white)
             } else {
                 TextField(placeholder, text: $text)
-                    .keyboardType(keyboardType)
                     .textInputAutocapitalization(autocapitalization)
                     .foregroundColor(.white)
             }

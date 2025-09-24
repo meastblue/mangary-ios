@@ -14,7 +14,7 @@ enum MainTabs {
 struct MainTabView: View {
     @EnvironmentObject private var authManager: AuthenticationManager
     @State private var selectedTab: MainTabs = .dashboard
-    @State private var searchString = ""
+    @State private var searchText = ""
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -33,15 +33,10 @@ struct MainTabView: View {
             }
 
             Tab(value: .search, role: .search) {
-                SearchResultsView(searchText: $searchString)
+                SearchContentView(searchText: $searchText)
             }
         }
-        .searchable(text: $searchString, placement: .automatic, prompt: "Rechercher un manga...")
-        /*.preferredColorScheme(.dark)
-        .background(.ultraThinMaterial)
-        .tint(.white)
-        .toolbarBackground(.ultraThinMaterial, for: .tabBar)
-        .toolbarBackgroundVisibility(.visible, for: .tabBar)*/
+        .searchable(text: $searchText, prompt: "Rechercher un manga...")
     }
 }
 

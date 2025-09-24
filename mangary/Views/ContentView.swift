@@ -14,7 +14,6 @@ struct ContentView: View {
     @StateObject private var authManager = AuthenticationManager()
 
     var body: some View {
-        NavigationStack {
             if authManager.isAuthenticated {
                 MainTabView()
                     .environmentObject(authManager)
@@ -22,7 +21,6 @@ struct ContentView: View {
                 HomeView()
                     .environmentObject(authManager)
             }
-        }
     }
 }
 

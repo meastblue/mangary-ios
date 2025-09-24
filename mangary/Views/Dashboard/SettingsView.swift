@@ -18,52 +18,15 @@ struct SettingsView: View {
 
     var body: some View {
         ZStack {
-            // Dynamic background with depth
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(.systemBackground),
-                    Color(.systemGray6).opacity(0.3)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            AppBackground()
 
             ScrollView {
                 VStack(spacing: 20) {
-                    // Header with liquid glass
-                    LiquidGlassCard(blur: 12, opacity: 0.1, cornerRadius: 16, shadowRadius: 8) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Paramètres")
-                                    .font(.largeTitle)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.primary)
-
-                                Text("Personnalisez votre expérience")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
-
-                            // Profile image with glass effect
-                            LiquidGlassCard(blur: 8, opacity: 0.1, cornerRadius: 25, shadowRadius: 4) {
-                                Circle()
-                                    .fill(Color.gray.opacity(0.2))
-                                    .frame(width: 50, height: 50)
-                                    .overlay(
-                                        Image(systemName: "person.fill")
-                                            .font(.title2)
-                                            .foregroundColor(.gray)
-                                    )
-                            }
+                    HeaderView(
+                        profileAction: {
+                            // Profile action
                         }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 15)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 10)
+                    )
 
                     // Settings sections
                     VStack(spacing: 25) {

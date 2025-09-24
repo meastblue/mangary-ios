@@ -14,89 +14,53 @@ struct BookmarkView: View {
 
     var body: some View {
         ZStack {
-            // Dynamic background with depth
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(.systemBackground),
-                    Color(.systemGray6).opacity(0.3)
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+            AppBackground()
 
-            VStack(spacing: 0) {
-                // Header with liquid glass
-                LiquidGlassCard(blur: 12, opacity: 0.1, cornerRadius: 16, shadowRadius: 8) {
-                    VStack(spacing: 15) {
+            VStack(spacing: 20) {
+                HeaderView(
+                    profileAction: {
+                        // Profile action
+                    }
+                )
+
+                // Search and filters section
+                VStack(spacing: 15) {
+                    // Search bar with liquid glass
+                    LiquidGlassCard(blur: 8, opacity: 0.06, cornerRadius: 12, shadowRadius: 4) {
                         HStack {
-                            VStack(alignment: .leading, spacing: 5) {
-                                Text("Favoris")
-                                    .font(.largeTitle)
-                                    .fontWeight(.bold)
-                                    .foregroundColor(.primary)
+                            Image(systemName: "magnifyingglass")
+                                .foregroundColor(.gray)
 
-                                Text("Vos mangas sauvegardés")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                            }
-
-                            Spacer()
-
-                            // Grid/List toggle with glass effect
-                            LiquidGlassButton(action: {
-                                // Toggle view action
-                            }) {
-                                Image(systemName: "square.grid.2x2")
-                                    .font(.title2)
-                                    .foregroundColor(Color("JapanRed"))
-                                    .frame(width: 40, height: 40)
-                            }
+                            TextField("Rechercher dans vos favoris...", text: $searchText)
+                                .textFieldStyle(PlainTextFieldStyle())
                         }
-                        .padding(.horizontal, 20)
-
-                        // Search bar with liquid glass
-                        LiquidGlassCard(blur: 8, opacity: 0.06, cornerRadius: 12, shadowRadius: 4) {
-                            HStack {
-                                Image(systemName: "magnifyingglass")
-                                    .foregroundColor(.gray)
-
-                                TextField("Rechercher dans vos favoris...", text: $searchText)
-                                    .textFieldStyle(PlainTextFieldStyle())
-                            }
-                            .padding()
-                        }
-                        .padding(.horizontal, 20)
-
-                        // Filter tabs with liquid glass
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 10) {
-                                ForEach(Array(filterOptions.enumerated()), id: \.offset) { index, option in
-                                    LiquidGlassButton(action: {
-                                        selectedFilter = index
-                                    }) {
-                                        Text(option)
-                                            .font(.subheadline)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(selectedFilter == index ? .white : Color("JapanRed"))
-                                            .padding(.horizontal, 20)
-                                            .padding(.vertical, 8)
-                                            .background(
-                                                selectedFilter == index ? Color("JapanRed") : Color.clear
-                                            )
-                                    }
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                                }
-                            }
-                            .padding(.horizontal, 20)
-                        }
+                        .padding()
                     }
                     .padding(.horizontal, 20)
-                    .padding(.vertical, 15)
+
+                    // Filter tabs with liquid glass
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(Array(filterOptions.enumerated()), id: \.offset) { index, option in
+                                LiquidGlassButton(action: {
+                                    selectedFilter = index
+                                }) {
+                                    Text(option)
+                                        .font(.subheadline)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(selectedFilter == index ? .white : Color("JapanRed"))
+                                        .padding(.horizontal, 20)
+                                        .padding(.vertical, 8)
+                                        .background(
+                                            selectedFilter == index ? Color("JapanRed") : Color.clear
+                                        )
+                                }
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                    }
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
-                .padding(.bottom, 20)
 
                 // Content
                 ScrollView {
@@ -205,8 +169,7 @@ struct BookmarkView: View {
             }
         }
     }
-    }
-
+}
 
 #Preview {
     BookmarkView()

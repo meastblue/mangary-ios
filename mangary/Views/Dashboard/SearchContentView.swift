@@ -1,5 +1,5 @@
 //
-//  SearchResultsView.swift
+//  SearchContentView.swift
 //  mangary
 //
 //  Created by Assistant on 23/09/2025.
@@ -7,12 +7,8 @@
 
 import SwiftUI
 
-struct SearchResultsView: View {
+struct SearchContentView: View {
     @Binding var searchText: String
-
-    init(searchText: Binding<String> = .constant("")) {
-        self._searchText = searchText
-    }
 
     private let allMangas = [
         "Naruto", "One Piece", "Attack on Titan", "Dragon Ball",
@@ -22,7 +18,7 @@ struct SearchResultsView: View {
 
     private var filteredResults: [String] {
         if searchText.isEmpty {
-            return allMangas // Montrer tous les mangas quand il n'y a pas de recherche
+            return allMangas
         }
         return allMangas.filter { $0.localizedCaseInsensitiveContains(searchText) }
     }
@@ -32,8 +28,15 @@ struct SearchResultsView: View {
             ZStack {
                 AppBackground()
 
+                VStack(spacing: 20) {
+                    HeaderView(
+                        profileAction: {
+                            // Profile action
+                        }
+                    )
+
                 if searchText.isEmpty {
-                    // Vue par défaut - suggestions ou contenu populaire
+                    // État vide - suggestions
                     VStack(spacing: 30) {
                         LiquidGlassCard(blur: 15, opacity: 0.08, cornerRadius: 20, shadowRadius: 10) {
                             VStack(spacing: 20) {
@@ -53,7 +56,7 @@ struct SearchResultsView: View {
                                         .fontWeight(.bold)
                                         .foregroundColor(.primary)
 
-                                    Text("Tapez pour rechercher vos mangas préférés")
+                                    Text("Commencez à taper pour rechercher")
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                         .multilineTextAlignment(.center)
@@ -88,6 +91,9 @@ struct SearchResultsView: View {
                                             }
                                             .padding(10)
                                         }
+                                        .onTapGesture {
+                                            searchText = manga
+                                        }
                                     }
                                 }
                                 .padding(.horizontal, 30)
@@ -101,7 +107,6 @@ struct SearchResultsView: View {
                             ForEach(0..<filteredResults.count, id: \.self) { index in
                                 LiquidGlassCard(blur: 8, opacity: 0.06, cornerRadius: 12, shadowRadius: 6) {
                                     HStack(spacing: 15) {
-                                        // Image du manga
                                         Rectangle()
                                             .fill(Color.gray.opacity(0.3))
                                             .frame(width: 60, height: 80)
@@ -128,13 +133,14 @@ struct SearchResultsView: View {
                         .padding(.top, 20)
                     }
                 }
+                }
             }
-            .navigationTitle("Recherche")
-            .navigationBarTitleDisplayMode(.large)
+            .navigationTitle("")
+            .navigationBarHidden(true)
         }
     }
 }
 
 #Preview {
-    SearchResultsView()
+    SearchContentView(searchText: .constant(""))
 }
