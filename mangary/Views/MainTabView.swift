@@ -6,17 +6,21 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            MangaDashboardView()
-                .tabItem {
-                    Label("Accueil", systemImage: "house.fill")
-                }
-                .tag(0)
+            Tab("Accueil", systemImage: "house.fill", value: 0) {
+                MangaDashboardView()
+            }
 
-            SettingsView(isLoggedIn: $isLoggedIn)
-                .tabItem {
-                    Label("Paramètres", systemImage: "gear")
-                }
-                .tag(3)
+            Tab("Recherche", systemImage: "magnifyingglass", value: 1, role: .search) {
+                SearchView()
+            }
+
+            Tab("Favoris", systemImage: "bookmark.fill", value: 2) {
+                BookmarkView()
+            }
+
+            Tab("Paramètres", systemImage: "gear", value: 3) {
+                SettingsView(isLoggedIn: $isLoggedIn)
+            }
         }
         .accentColor(Color("JapanRed"))
     }
