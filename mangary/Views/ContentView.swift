@@ -1,31 +1,29 @@
-//
-//  ContentView.swift
-//  mangary
-//
-//  Created by Massinissa Amalou on 21/09/2025.
-//
-
 import SwiftUI
-import SwiftData
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-    @StateObject private var authManager = AuthenticationManager()
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
+    @State private var showingHome = true
+    @StateObject private var themeManager = ThemeManager()
 
     var body: some View {
-            if authManager.isAuthenticated {
-                MainTabView()
-                    .environmentObject(authManager)
+        Group {
+            if showingHome {
+                HomeView(showingHome: $showingHome, isLoggedIn: $isLoggedIn)
+            } else if isLoggedIn {
+                MainTabView(isLoggedIn: $isLoggedIn)
             } else {
-                HomeView()
-                    .environmentObject(authManager)
+                NavigationStack {
+                    LoginView(isLoggedIn: $isLoggedIn)
+                }
             }
+        }
+        .animation(.easeInOut, value: showingHome)
+        .animation(.easeInOut, value: isLoggedIn)
+        .environmentObject(themeManager)
+        .preferredColorScheme(themeManager.colorScheme)
     }
 }
 
-
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
 }

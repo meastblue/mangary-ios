@@ -1,45 +1,27 @@
-//
-//  MainTabView.swift
-//  mangary
-//
-//  Created by Assistant on 23/09/2025.
-//
-
 import SwiftUI
 
-enum MainTabs {
-    case dashboard, bookmark, settings, search
-}
-
 struct MainTabView: View {
-    @EnvironmentObject private var authManager: AuthenticationManager
-    @State private var selectedTab: MainTabs = .dashboard
-    @State private var searchText = ""
+    @Binding var isLoggedIn: Bool
+    @State private var selectedTab = 0
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab("Home", systemImage: "house.fill", value: .dashboard) {
-                DashboardView()
-                    .environmentObject(authManager)
-            }
+            MangaDashboardView()
+                .tabItem {
+                    Label("Accueil", systemImage: "house.fill")
+                }
+                .tag(0)
 
-            Tab("Bookmarks", systemImage: "bookmark.fill", value: .bookmark) {
-                BookmarkView()
-            }
-
-            Tab("Settings", systemImage: "gear", value: .settings) {
-                SettingsView()
-                    .environmentObject(authManager)
-            }
-
-            Tab(value: .search, role: .search) {
-                SearchContentView(searchText: $searchText)
-            }
+            SettingsView(isLoggedIn: $isLoggedIn)
+                .tabItem {
+                    Label("Paramètres", systemImage: "gear")
+                }
+                .tag(3)
         }
-        .searchable(text: $searchText, prompt: "Rechercher un manga...")
+        .accentColor(Color("JapanRed"))
     }
 }
 
 #Preview {
-    MainTabView()
+    MainTabView(isLoggedIn: .constant(true))
 }

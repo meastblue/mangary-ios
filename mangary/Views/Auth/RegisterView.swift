@@ -1,13 +1,7 @@
-//
-//  RegisterView.swift
-//  mangary
-//
-//  Created by Massinissa Amalou on 21/09/2025.
-//
-
 import SwiftUI
 
 struct RegisterView: View {
+    @Binding var isLoggedIn: Bool
     @State private var firstName = ""
     @State private var lastName = ""
     @State private var username = ""
@@ -15,248 +9,168 @@ struct RegisterView: View {
     @State private var password = ""
     @State private var confirmPassword = ""
     @State private var acceptTerms = false
-    @State private var isPasswordVisible = false
-    @State private var isConfirmPasswordVisible = false
     @State private var isLoading = false
     @State private var showingAlert = false
     @State private var alertMessage = ""
-    @State private var alertTitle = "Erreur"
-    @State private var navigateToRegistrationSuccess = false
+    @State private var navigateToSuccess = false
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var authManager: AuthenticationManager
+
+    private var passwordsMatch: Bool {
+        password == confirmPassword && !password.isEmpty
+    }
+
+    private var isFormValid: Bool {
+        !firstName.isEmpty &&
+        !lastName.isEmpty &&
+        !username.isEmpty &&
+        !email.isEmpty &&
+        email.contains("@") &&
+        password.count >= 8 &&
+        passwordsMatch &&
+        acceptTerms
+    }
 
     var body: some View {
         ZStack {
-            // Dynamic background with depth
-            GeometryReader { geometry in
-                ZStack {
-                    // Base gradient
-                    LinearGradient(
-                        gradient: Gradient(colors: [
-                            Color(red: 0.749, green: 0.188, blue: 0.188),
-                            Color(red: 0.549, green: 0.088, blue: 0.088),
-                            Color(red: 0.349, green: 0.058, blue: 0.058)
-                        ]),
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing
-                    )
+            AuthBackground()
 
-                    // Floating blur elements for depth
-                    Circle()
-                        .fill(.white.opacity(0.06))
-                        .blur(radius: 50)
-                        .frame(width: 200, height: 200)
-                        .offset(x: -100, y: -180)
+            ScrollView {
+                VStack(spacing: 0) {
+                    Spacer()
+                        .frame(height: 60)
 
-                    Circle()
-                        .fill(.white.opacity(0.03))
-                        .blur(radius: 70)
-                        .frame(width: 280, height: 280)
-                        .offset(x: 120, y: 220)
-                }
-            }
-            .ignoresSafeArea()
+                    AuthLogo(subtitle: "Créer un compte")
 
-                ScrollView {
-                    VStack(spacing: 20) {
-                        // Logo section with liquid glass
-                        LiquidGlassCard(blur: 15, opacity: 0.08, cornerRadius: 20, shadowRadius: 10) {
-                            VStack(spacing: 15) {
-                                Text("漫画")
-                                    .font(.system(size: 45, weight: .bold, design: .serif))
-                                    .foregroundStyle(
-                                        LinearGradient(
-                                            colors: [.white, .white.opacity(0.8)],
-                                            startPoint: .top,
-                                            endPoint: .bottom
-                                        )
-                                    )
-                                    .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 5)
-
-                                Text("MANGARY")
-                                    .font(.system(size: 20, weight: .light))
-                                    .foregroundColor(.white.opacity(0.9))
-                                    .tracking(4)
-
-                                Text("Créer un compte")
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.white.opacity(0.9))
-                                    .padding(.top, 5)
-                            }
-                            .padding(.horizontal, 25)
-                            .padding(.vertical, 20)
-                        }
-                        .padding(.bottom, 30)
-
-                        // Form section
-                        VStack(spacing: 15) {
-                            // First name and Last name fields on same line
-                            HStack(spacing: 10) {
-                                AppTextField(
-                                    placeholder: "Prénom",
-                                    text: $firstName,
-                                    icon: "person.fill"
-                                )
-
-                                AppTextField(
-                                    placeholder: "Nom",
-                                    text: $lastName
-                                )
-                            }
-
-                            // Username field
+                    VStack(spacing: 16) {
+                        HStack(spacing: 12) {
                             AppTextField(
-                                placeholder: "Nom d'utilisateur",
-                                text: $username,
-                                icon: "at",
-                                autocapitalization: .never
+                                placeholder: "Prénom",
+                                text: $firstName,
+                                icon: "person.fill"
                             )
 
-                            // Email field
                             AppTextField(
-                                placeholder: "Email",
-                                text: $email,
-                                icon: "envelope.fill",
-                                keyboardType: .emailAddress,
-                                autocapitalization: .never
-                            )
-
-                            // Password field
-                            AppTextField(
-                                placeholder: "Mot de passe",
-                                text: $password,
-                                icon: "lock.fill",
-                                isSecure: true,
-                                showToggle: true,
-                                isSecureVisible: $isPasswordVisible
-                            )
-
-                            // Confirm Password field
-                            AppTextField(
-                                placeholder: "Confirmer mot de passe",
-                                text: $confirmPassword,
-                                icon: "lock.fill",
-                                isSecure: true,
-                                hasError: !passwordsMatch() && !confirmPassword.isEmpty,
-                                showToggle: true,
-                                isSecureVisible: $isConfirmPasswordVisible
+                                placeholder: "Nom",
+                                text: $lastName
                             )
                         }
-                        .padding(.horizontal, 30)
 
-                        // Terms and conditions checkbox
-                        HStack {
-                            Button(action: {
-                                acceptTerms.toggle()
-                            }) {
-                                Image(systemName: acceptTerms ? "checkmark.square.fill" : "square")
-                                    .foregroundColor(acceptTerms ? Color("JapanRed") : .white.opacity(0.7))
-                                    .font(.system(size: 20))
-                            }
+                        AppTextField(
+                            placeholder: "Nom d'utilisateur",
+                            text: $username,
+                            icon: "at",
+                            autocapitalization: .never
+                        )
 
+                        AppTextField(
+                            placeholder: "Email",
+                            text: $email,
+                            icon: "envelope",
+                            keyboardType: .emailAddress,
+                            autocapitalization: .never
+                        )
+
+                        AppTextField(
+                            placeholder: "Mot de passe",
+                            text: $password,
+                            icon: "lock",
+                            isSecure: true,
+                            showToggle: true
+                        )
+
+                        AppTextField(
+                            placeholder: "Confirmer mot de passe",
+                            text: $confirmPassword,
+                            icon: "lock",
+                            isSecure: true,
+                            hasError: !passwordsMatch && !confirmPassword.isEmpty,
+                            showToggle: true
+                        )
+                    }
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 24)
+
+                    HStack(spacing: 12) {
+                        Button {
+                            acceptTerms.toggle()
+                        } label: {
+                            Image(systemName: acceptTerms ? "checkmark.square.fill" : "square")
+                                .foregroundColor(acceptTerms ? .white : .white.opacity(0.7))
+                                .font(.system(size: 20))
+                        }
+
+                        HStack(spacing: 0) {
                             Text("J'accepte les ")
-                                .font(.system(size: 13))
+                                .font(.system(size: 14))
                                 .foregroundColor(.white.opacity(0.8))
-                            +
+
                             Text("conditions d'utilisation")
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(.white)
                                 .underline()
-
-                            Spacer()
                         }
-                        .padding(.horizontal, 35)
 
-                        // Register button with liquid glass
-                        LiquidGlassButton(action: {
-                            registerUser()
-                        }) {
-                            HStack {
-                                if isLoading {
-                                    ProgressView()
-                                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                        .scaleEffect(0.8)
-                                } else {
-                                    Text("S'inscrire")
-                                        .font(.system(size: 18, weight: .semibold))
-                                }
-                            }
-                            .foregroundColor(.white)
-                            .frame(width: 250, height: 55)
-                        }
-                        .disabled(!isFormValid() || isLoading)
-                        .opacity(isFormValid() ? 1.0 : 0.7)
-                        .padding(.top, 20)
-
-                        // Login link
-                        HStack {
-                            Text("Déjà un compte ?")
-                                .foregroundColor(.white.opacity(0.8))
-                                .font(.system(size: 14))
-
-                            Button("Se connecter") {
-                                dismiss()
-                            }
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.white)
-                        }
-                        .padding(.top, 10)
-                        .padding(.bottom, 40)
+                        Spacer()
                     }
-                    .padding(.top, 60)
+                    .padding(.horizontal, 32)
+                    .padding(.bottom, 24)
+
+                    AuthButton(
+                        title: "S'inscrire",
+                        isLoading: isLoading,
+                        isEnabled: isFormValid,
+                        action: handleRegister
+                    )
+                    .padding(.bottom, 24)
+
+                    HStack {
+                        Text("Déjà un compte ? ")
+                            .font(.system(size: 14))
+                            .foregroundColor(.white.opacity(0.8))
+
+                        Button("Se connecter") {
+                            dismiss()
+                        }
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.white)
+                        .underline()
+                    }
+                    .padding(.bottom, 60)
+
+                    Spacer()
                 }
             }
-        .navigationBarBackButtonHidden(true)
-        .navigationDestination(isPresented: $navigateToRegistrationSuccess) {
-            RegistrationSuccessView(email: email)
-                .navigationBarBackButtonHidden(true)
-                .environmentObject(authManager)
         }
-        .alert(alertTitle, isPresented: $showingAlert) {
+        .navigationBarBackButtonHidden(true)
+        .navigationDestination(isPresented: $navigateToSuccess) {
+            RegistrationSuccessView(email: email, isLoggedIn: $isLoggedIn)
+                .navigationBarBackButtonHidden(true)
+        }
+        .alert("Erreur", isPresented: $showingAlert) {
             Button("OK", role: .cancel) { }
         } message: {
             Text(alertMessage)
         }
     }
 
-    private func passwordsMatch() -> Bool {
-        return password == confirmPassword && !password.isEmpty
-    }
+    private func handleRegister() {
+        guard isFormValid else {
+            alertMessage = !acceptTerms ? "Veuillez accepter les conditions d'utilisation" : "Veuillez remplir tous les champs correctement"
+            showingAlert = true
+            return
+        }
 
-    private func isFormValid() -> Bool {
-        return !firstName.isEmpty &&
-               !lastName.isEmpty &&
-               !username.isEmpty &&
-               !email.isEmpty &&
-               email.contains("@") &&
-               password.count >= 8 &&
-               passwordsMatch() &&
-               acceptTerms
-    }
-
-    private func registerUser() {
         isLoading = true
 
-        // Simulate API call
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             isLoading = false
-
-            if isFormValid() {
-                // Navigate directly to success page without alert
-                navigateToRegistrationSuccess = true
-            } else {
-                alertTitle = "Erreur"
-                if !acceptTerms {
-                    alertMessage = "Veuillez accepter les conditions d'utilisation"
-                } else {
-                    alertMessage = "Veuillez remplir tous les champs correctement"
-                }
-                showingAlert = true
-            }
+            navigateToSuccess = true
         }
     }
 }
 
 #Preview {
-    RegisterView()
+    NavigationStack {
+        RegisterView(isLoggedIn: .constant(false))
+    }
 }

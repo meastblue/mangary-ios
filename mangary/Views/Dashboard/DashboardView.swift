@@ -1,98 +1,157 @@
-//
-//  DashboardView.swift
-//  mangary
-//
-//  Created by Massinissa Amalou on 21/09/2025.
-//
-
 import SwiftUI
 
-struct DashboardView: View {
-    @EnvironmentObject private var authManager: AuthenticationManager
+struct MangaDashboardView: View {
+    @State private var selectedCategory: String? = nil
+    @StateObject private var themeManager = ThemeManager()
+
+    private let newMangaData = MockData.generateManga(count: 6)
+    private let readingData = MockData.generateReadingManga(count: 4)
 
     var body: some View {
+        AnimatedThemeView(useBackground: true) {
+            ZStack {
+                AnimatedThemeView(useSurface: true)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    if let selectedCategory = selectedCategory {
+                        VStack {
+                            CategoryResultsView(
+                                category: selectedCategory,
+                                onBackPress: handleBackToHome
+                            )
+                        }
+                        .padding(.top, 16)
+                        .padding(.bottom, 32)
+                    } else {
+                        VStack(spacing: 24) {
+                            HeaderView(
+                                onNotificationPress: handleNotificationPress,
+                                hasNotifications: true
+                            )
+
+                            renderNewReleasesSection()
+                            renderCategoriesSection()
+                            renderReadingSection()
+                        }
+                        .padding(.bottom, 32)
+                    }
+                }
+                .scrollIndicators(.hidden)
+            }
+        }
+    }
+
+    private func renderFloatingElements() -> some View {
         ZStack {
-            AppBackground()
+            AnimatedThemeView(
+                lightColor: themeManager.floatingElementLight,
+                darkColor: themeManager.floatingElementDark,
+                width: 192,
+                height: 192,
+                cornerRadius: 96
+            )
+            .offset(x: -48, y: -96)
 
-            ScrollView {
-                VStack(spacing: 30) {
-                    HeaderView(
-                        profileAction: {
-                            // Profile action
-                        }
+            AnimatedThemeView(
+                lightColor: themeManager.floatingElementLight,
+                darkColor: themeManager.floatingElementDark,
+                width: 256,
+                height: 256,
+                cornerRadius: 128
+            )
+            .offset(x: 64, y: 128)
+
+            AnimatedThemeView(
+                lightColor: themeManager.floatingElementLight,
+                darkColor: themeManager.floatingElementDark,
+                width: 208,
+                height: 208,
+                cornerRadius: 104
+            )
+            .offset(x: 16, y: 320)
+        }
+    }
+
+    private func renderNewReleasesSection() -> some View {
+        SectionView(
+            title: "Nouveautés",
+            actionTitle: "Voir tout",
+            onActionPress: handleSeeAllPress
+        ) {
+            HorizontalCarousel(
+                itemWidth: 110,
+                itemHeight: 180,
+                gap: 12
+            ) {
+                ForEach(newMangaData, id: \.id) { item in
+                    MangaCard(
+                        title: item.title,
+                        imageUrl: item.imageUrl,
+                        width: 110,
+                        height: 180,
+                        onPress: { handleCardPress(item.id) }
                     )
-
-                    // Main content section
-                    VStack(alignment: .leading, spacing: 15) {
-                        SectionHeader(
-                            title: "Explorer",
-                            actionTitle: "Voir tout"
-                        ) {
-                            // See all action
-                        }
-
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 15) {
-                                ForEach(0..<3) { index in
-                                    VStack(spacing: 8) {
-                                        LiquidGlassCard(blur: 8, opacity: 0.06, cornerRadius: 12, shadowRadius: 4) {
-                                            Rectangle()
-                                                .fill(Color.gray.opacity(0.2))
-                                                .frame(width: 120, height: 160)
-                                                .overlay(
-                                                    Image(systemName: "book.fill")
-                                                        .font(.title)
-                                                        .foregroundColor(Color("JapanRed").opacity(0.6))
-                                                )
-                                        }
-
-                                        Text("Manga")
-                                            .font(.caption)
-                                            .fontWeight(.medium)
-                                            .multilineTextAlignment(.center)
-                                            .frame(width: 120)
-                                    }
-                                }
-                            }
-                            .padding(.horizontal, 20)
-                        }
-                    }
-
-                    // Categories section
-                    VStack(alignment: .leading, spacing: 15) {
-                        SectionHeader(title: "Catégories")
-
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 15) {
-                            ForEach(["Action", "Romance", "Aventure", "Comédie"], id: \.self) { category in
-                                LiquidGlassButton(action: {
-                                    // Category action
-                                }) {
-                                    HStack {
-                                        Text(category)
-                                            .font(.subheadline)
-                                            .fontWeight(.medium)
-                                            .foregroundColor(.primary)
-
-                                        Spacer()
-
-                                        Image(systemName: "chevron.right")
-                                            .font(.caption)
-                                            .foregroundColor(.gray)
-                                    }
-                                    .padding()
-                                }
-                            }
-                        }
-                        .padding(.horizontal, 20)
-                    }
-
-                    Spacer(minLength: 30)
                 }
             }
         }
     }
+
+    private func renderCategoriesSection() -> some View {
+        SectionView(title: "Catégories populaires") {
+            CategoryCarouselView(
+                categories: MockData.categories,
+                onCategoryPress: handleCategoryPress
+            )
+        }
+    }
+
+    private func renderReadingSection() -> some View {
+        SectionView(
+            title: "Lecture en cours",
+            actionTitle: "Voir tout",
+            onActionPress: handleSeeAllPress
+        ) {
+            HorizontalCarousel(
+                itemWidth: 110,
+                itemHeight: 180,
+                gap: 12
+            ) {
+                ForEach(readingData, id: \.id) { item in
+                    MangaCard(
+                        title: item.title,
+                        imageUrl: item.imageUrl,
+                        subtitle: item.progress != nil ? "\(item.progress!)%" : nil,
+                        width: 110,
+                        height: 180,
+                        onPress: { handleCardPress(item.id) }
+                    )
+                }
+            }
+        }
+    }
+
+    private func handleNotificationPress() {
+        print("Notification pressed")
+    }
+
+    private func handleSeeAllPress() {
+        print("See all pressed")
+    }
+
+    private func handleCategoryPress(_ category: String) {
+        selectedCategory = category
+    }
+
+    private func handleBackToHome() {
+        selectedCategory = nil
+    }
+
+    private func handleCardPress(_ mangaId: Int) {
+        print("Card pressed: \(mangaId)")
+    }
 }
 
 #Preview {
-    DashboardView()
+    MangaDashboardView()
 }

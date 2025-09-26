@@ -11,6 +11,7 @@ struct SectionHeader: View {
     let title: String
     let actionTitle: String?
     let action: (() -> Void)?
+    @StateObject private var themeManager = ThemeManager()
 
     init(title: String, actionTitle: String? = nil, action: (() -> Void)? = nil) {
         self.title = title
@@ -23,7 +24,7 @@ struct SectionHeader: View {
             Text(title)
                 .font(.title2)
                 .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .foregroundColor(themeManager.primaryTextColor)
 
             Spacer()
 

@@ -1,72 +1,71 @@
-//
-//  HeaderView.swift
-//  mangary
-//
-//  Created by Assistant on 23/09/2025.
-//
-
 import SwiftUI
 
 struct HeaderView: View {
-    let profileAction: (() -> Void)?
+    let onNotificationPress: () -> Void
+    let hasNotifications: Bool
+    @StateObject private var themeManager = ThemeManager()
 
-    init(profileAction: (() -> Void)? = nil) {
-        self.profileAction = profileAction
+    init(onNotificationPress: @escaping () -> Void, hasNotifications: Bool = false) {
+        self.onNotificationPress = onNotificationPress
+        self.hasNotifications = hasNotifications
     }
 
     var body: some View {
-        LiquidGlassCard(blur: 12, opacity: 0.1, cornerRadius: 16, shadowRadius: 8) {
-            HStack {
-                VStack(alignment: .leading, spacing: 5) {
-                    Text("漫画")
-                        .font(.system(size: 32, weight: .bold, design: .serif))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [Color("JapanRed"), Color("JapanRed").opacity(0.8)],
-                                startPoint: .top,
-                                endPoint: .bottom
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                AnimatedText(
+                    "漫画",
+                    fontSize: 32,
+                    fontWeight: .bold,
+                    usePrimaryColor: true,
+                    letterSpacing: 1.5
+                )
+
+                AnimatedText(
+                    "MANGARY",
+                    fontSize: 14,
+                    fontWeight: .light,
+                    useSecondaryTextColor: true,
+                    letterSpacing: 2
+                )
+            }
+
+            Spacer()
+
+            Button(action: onNotificationPress) {
+                ZStack {
+                    Image(systemName: "bell")
+                        .font(.system(size: 24))
+                        .foregroundColor(themeManager.primaryTextColor)
+
+                    if hasNotifications {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 12, height: 12)
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.white, lineWidth: 1)
                             )
-                        )
-
-                    Text("MANGARY")
-                        .font(.system(size: 18, weight: .light))
-                        .foregroundColor(.primary)
-                        .tracking(2)
-                }
-
-                Spacer()
-
-                // Profile button with glass effect
-                if let profileAction = profileAction {
-                    LiquidGlassButton(action: profileAction) {
-                        Image(systemName: "person.circle.fill")
-                            .font(.system(size: 28))
-                            .foregroundColor(Color("JapanRed"))
-                            .frame(width: 40, height: 40)
+                            .offset(x: 6, y: -6)
                     }
                 }
+                .frame(width: 48, height: 48)
+                .clipShape(Circle())
+                .scaleEffect(1.0)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 15)
+            .buttonStyle(PlainButtonStyle())
+            .onTapGesture {
+                onNotificationPress()
+            }
         }
-        .padding(.horizontal, 20)
-        .padding(.top, 10)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 16)
     }
 }
 
 #Preview {
-    VStack {
-        HeaderView(profileAction: {})
+    ZStack {
+        Color.white
+        HeaderView(onNotificationPress: {}, hasNotifications: true)
     }
-    .padding()
-    .background(
-        LinearGradient(
-            gradient: Gradient(colors: [
-                Color(.systemBackground),
-                Color(.systemGray6).opacity(0.3)
-            ]),
-            startPoint: .top,
-            endPoint: .bottom
-        )
-    )
 }

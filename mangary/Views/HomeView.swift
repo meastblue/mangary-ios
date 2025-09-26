@@ -1,111 +1,81 @@
-//
-//  HomeView.swift
-//  mangary
-//
-//  Created by Massinissa Amalou on 21/09/2025.
-//
-
 import SwiftUI
 
 struct HomeView: View {
-    @State private var navigateToLogin = false
-    @EnvironmentObject private var authManager: AuthenticationManager
+    @Binding var showingHome: Bool
+    @Binding var isLoggedIn: Bool
 
     var body: some View {
-        NavigationStack {
+        ZStack {
+            // Dynamic background with depth - Couleur principale #be2f2f
             ZStack {
-                // Dynamic background with depth
-                GeometryReader { geometry in
-                    ZStack {
-                        // Base gradient
-                        LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color(red: 0.749, green: 0.188, blue: 0.188),
-                                Color(red: 0.549, green: 0.088, blue: 0.088),
-                                Color(red: 0.349, green: 0.058, blue: 0.058)
-                            ]),
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
+                Color(red: 0.745, green: 0.184, blue: 0.184) // #be2f2f
 
-                        // Floating blur elements for depth
-                        Circle()
-                            .fill(.white.opacity(0.1))
-                            .blur(radius: 60)
-                            .frame(width: 200, height: 200)
-                            .offset(x: -100, y: -200)
+                // Floating elements for depth
+                Circle()
+                    .fill(Color.white.opacity(0.1))
+                    .frame(width: 192, height: 192)
+                    .offset(x: -160, y: -380)
 
-                        Circle()
-                            .fill(.white.opacity(0.05))
-                            .blur(radius: 80)
-                            .frame(width: 300, height: 300)
-                            .offset(x: 150, y: 100)
+                Circle()
+                    .fill(Color.white.opacity(0.05))
+                    .frame(width: 288, height: 288)
+                    .offset(x: 120, y: 0)
+
+                Circle()
+                    .fill(Color.white.opacity(0.08))
+                    .frame(width: 224, height: 224)
+                    .offset(x: -80, y: 280)
+            }
+            .ignoresSafeArea()
+
+            // Main content - flex-1 justify-center items-center px-10
+            VStack {
+                Spacer()
+
+                VStack(spacing: 0) {
+                    // Logo section - items-center space-y-5 mb-20
+                    VStack(spacing: 20) { // space-y-5
+                        Text("漫画")
+                            .font(.system(size: 72, weight: .bold)) // text-7xl font-bold
+                            .foregroundColor(.white)
+                            .tracking(2) // tracking-wide
+
+                        Text("MANGARY")
+                            .font(.system(size: 30, weight: .light)) // text-3xl font-light
+                            .foregroundColor(Color.white.opacity(0.9))
+                            .tracking(6) // letterSpacing: 6
                     }
-                }
-                .ignoresSafeArea()
+                    .padding(.bottom, 80) // mb-20
 
-                VStack(spacing: 40) {
-                    Spacer()
-
-                    // Logo with liquid glass effect
-                    LiquidGlassCard(blur: 20, opacity: 0.1, cornerRadius: 24, shadowRadius: 12) {
-                        VStack(spacing: 20) {
-                            Text("漫画")
-                                .font(.system(size: 72, weight: .bold, design: .serif))
-                                .foregroundStyle(
-                                    LinearGradient(
-                                        colors: [.white, .white.opacity(0.8)],
-                                        startPoint: .top,
-                                        endPoint: .bottom
-                                    )
-                                )
-                                .shadow(color: .black.opacity(0.3), radius: 15, x: 0, y: 10)
-
-                            Text("MANGARY")
-                                .font(.system(size: 28, weight: .light))
-                                .foregroundColor(.white.opacity(0.9))
-                                .tracking(6)
-                        }
-                        .padding(.horizontal, 40)
-                        .padding(.vertical, 30)
-                    }
-
-                    Spacer()
-
-                    // Liquid glass start button
-                    LiquidGlassButton(action: { navigateToLogin = true }) {
-                        VStack(spacing: 8) {
-                            HStack(spacing: 12) {
-                                Text("始める")
-                                    .font(.system(size: 22, weight: .semibold))
-                                    .foregroundColor(.white)
-
-                                Image(systemName: "arrow.right")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(.white)
-                            }
+                    // Start button - bg-white rounded-full shadow-xl px-16 py-2 active:scale-95
+                    Button(action: {
+                        showingHome = false
+                    }) {
+                        VStack(spacing: 4) { // space-y-1
+                            Text("始める")
+                                .font(.system(size: 30, weight: .semibold)) // text-3xl font-semibold
+                                .foregroundColor(Color(red: 0.745, green: 0.184, blue: 0.184)) // usePrimaryColor (#be2f2f)
 
                             Text("Commencer")
-                                .font(.system(size: 12, weight: .light))
-                                .foregroundColor(.white.opacity(0.7))
+                                .font(.system(size: 14, weight: .light)) // text-sm font-light
+                                .foregroundColor(Color(red: 0.745, green: 0.184, blue: 0.184).opacity(0.8))
                         }
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 66)
+                        .padding(.horizontal, 64) // px-16
+                        .padding(.vertical, 8) // py-2
                     }
-                    .padding(.horizontal, 40)
-
-                    Spacer(minLength: 60)
+                    .background(Color.white)
+                    .clipShape(RoundedRectangle(cornerRadius: 40)) // plus ovale
+                    .shadow(color: .black.opacity(0.3), radius: 15, x: 0, y: 8) // shadow-xl
+                    .scaleEffect(1.0) // active:scale-95 (would need gesture handling)
                 }
+
+                Spacer()
             }
-            .navigationDestination(isPresented: $navigateToLogin) {
-                LoginView()
-                    .navigationBarBackButtonHidden(true)
-                    .environmentObject(authManager)
-            }
+            .padding(.horizontal, 40) // px-10
         }
     }
 }
 
 #Preview {
-    HomeView()
+    HomeView(showingHome: .constant(true), isLoggedIn: .constant(false))
 }
