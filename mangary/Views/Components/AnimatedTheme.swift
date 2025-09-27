@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct AnimatedThemeView: View {
+struct AnimatedTheme: View {
     let useBackground: Bool
     let useSurface: Bool
     let lightColor: Color?
@@ -60,7 +60,7 @@ struct AnimatedThemeView: View {
         Color.gray.opacity(0.1)
 
         VStack(spacing: 20) {
-            AnimatedThemeView(
+            AnimatedTheme(
                 lightColor: Color.white.opacity(0.05),
                 darkColor: Color.gray.opacity(0.1),
                 width: 192,
@@ -68,12 +68,12 @@ struct AnimatedThemeView: View {
                 cornerRadius: 96
             )
 
-            AnimatedThemeView(useBackground: true) {
+            AnimatedTheme(useBackground: true) {
                 Text("Background Example")
                     .padding()
             }
 
-            AnimatedThemeView(useSurface: true) {
+            AnimatedTheme(useSurface: true) {
                 Text("Surface Example")
                     .padding()
             }

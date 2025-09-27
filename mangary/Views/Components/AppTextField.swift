@@ -28,20 +28,18 @@ struct AppTextField: View {
         self.keyboardType = keyboardType
         self.autocapitalization = autocapitalization
         self.hasError = hasError
-        self.showToggle = showToggle || isSecure // Auto-enable toggle for secure fields
+        self.showToggle = showToggle || isSecure
     }
 
     var body: some View {
-        HStack(spacing: 12) { // flex-row items-center
-            // Icon (optional)
+        HStack(spacing: 12) {
             if let icon = icon {
                 Image(systemName: icon)
                     .font(.system(size: 20))
-                    .foregroundColor(Color.white.opacity(0.7)) // rgba(255, 255, 255, 0.7)
+                    .foregroundColor(Color.white.opacity(0.7))
                     .frame(width: 20, height: 20)
             }
 
-            // Text field - text-white text-base flex-1 ml-3
             ZStack(alignment: .leading) {
                 if text.isEmpty {
                     Text(placeholder)
@@ -53,36 +51,35 @@ struct AppTextField: View {
                     SecureField("", text: $text)
                         .keyboardType(keyboardType)
                         .textInputAutocapitalization(autocapitalization)
-                        .foregroundColor(.white) // text-white
-                        .font(.system(size: 16)) // text-base
-                        .frame(maxWidth: .infinity) // flex-1
+                        .foregroundColor(.white)
+                        .font(.system(size: 16))
+                        .frame(maxWidth: .infinity)
                 } else {
                     TextField("", text: $text)
                         .keyboardType(keyboardType)
                         .textInputAutocapitalization(autocapitalization)
-                        .foregroundColor(.white) // text-white
-                        .font(.system(size: 16)) // text-base
-                        .frame(maxWidth: .infinity) // flex-1
+                        .foregroundColor(.white)
+                        .font(.system(size: 16))
+                        .frame(maxWidth: .infinity)
                 }
             }
 
-            // Toggle button for secure fields
             if showToggle && isSecure {
                 Button(action: {
                     isSecureVisible.toggle()
                 }) {
                     Image(systemName: isSecureVisible ? "eye" : "eye.slash")
                         .font(.system(size: 20))
-                        .foregroundColor(Color.white.opacity(0.7)) // rgba(255, 255, 255, 0.7)
+                        .foregroundColor(Color.white.opacity(0.7))
                         .frame(width: 20, height: 20)
                 }
             }
         }
-        .padding(.horizontal, 20) // px-5
-        .padding(.vertical, 16) // py-4
-        .background(Color.white.opacity(0.2)) // bg-white/20
-        .cornerRadius(16) // rounded-2xl
-        .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3) // shadow-md
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
+        .background(Color.white.opacity(0.2))
+        .cornerRadius(16)
+        .shadow(color: .black.opacity(0.1), radius: 6, x: 0, y: 3)
     }
 }
 

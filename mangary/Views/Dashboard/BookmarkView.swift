@@ -7,15 +7,17 @@ struct BookmarkView: View {
     @StateObject private var themeManager = ThemeManager()
 
     var body: some View {
-        AnimatedThemeView(useBackground: true) {
-            ZStack {
-                AnimatedThemeView(useSurface: true)
-                    .ignoresSafeArea()
+        NavigationStack {
+            AnimatedThemeView(useBackground: true) {
+                ZStack {
+                    AnimatedThemeView(useSurface: true)
+                        .ignoresSafeArea()
 
-                if bookmarkedMangas.isEmpty {
-                    emptyStateView
-                } else {
-                    bookmarksList
+                    if bookmarkedMangas.isEmpty {
+                        emptyStateView
+                    } else {
+                        bookmarksList
+                    }
                 }
             }
         }

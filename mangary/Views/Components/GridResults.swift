@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CategoryResultsView: View {
+struct GridResults: View {
     let category: String
     let onBackPress: () -> Void
     @StateObject private var themeManager = ThemeManager()
@@ -49,7 +49,7 @@ struct CategoryResultsView: View {
 #Preview {
     ZStack {
         Color.white
-        CategoryResultsView(
+        GridResults(
             category: "Action",
             onBackPress: {}
         )

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct HeaderView: View {
+struct Header: View {
     let onNotificationPress: () -> Void
     let hasNotifications: Bool
     @StateObject private var themeManager = ThemeManager()
@@ -66,6 +66,6 @@ struct HeaderView: View {
 #Preview {
     ZStack {
         Color.white
-        HeaderView(onNotificationPress: {}, hasNotifications: true)
+        Header(onNotificationPress: {}, hasNotifications: true)
     }
 }

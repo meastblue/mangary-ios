@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CategoryCarouselView: View {
+struct PaginatedGrid: View {
     let categories: [String]
     let onCategoryPress: (String) -> Void
 
@@ -57,7 +57,7 @@ struct CategoryCarouselView: View {
 #Preview {
     ZStack {
         Color.white
-        CategoryCarouselView(
+        PaginatedGrid(
             categories: MockData.categories,
             onCategoryPress: { _ in }
         )

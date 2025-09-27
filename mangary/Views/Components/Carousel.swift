@@ -3,37 +3,31 @@ import SwiftUI
 struct CarouselView<Content: View>: View {
     let content: Content
 
-    // Layout configuration
     let itemsPerPage: ItemsPerPage
     let columns: Int
     let rows: Int
 
-    // Dimensions
     let pageWidth: PageWidth
     let itemWidth: ItemWidth
     let itemHeight: CGFloat?
 
-    // Spacing
     let gap: CGFloat
     let horizontalSpacing: CGFloat?
     let verticalSpacing: CGFloat?
     let contentPadding: CGFloat
     let pageSpacing: CGFloat
 
-    // Pagination
     let showPagination: Bool
     let paginationPosition: PaginationPosition
     let activeDotColor: Color
     let inactiveDotColor: Color
     let dotSize: CGFloat
 
-    // Behavior
     let snapToPage: Bool
     let enableScroll: Bool
     let autoplay: Bool
     let autoplayInterval: TimeInterval
 
-    // Callbacks
     let onPageChange: ((Int) -> Void)?
 
     @State private var currentPage: Int = 0
@@ -207,8 +201,6 @@ struct CarouselView<Content: View>: View {
     }
 
     private var totalPages: Int {
-        // This would need to be calculated based on the actual content
-        // For now, return 1 as we can't easily count children in SwiftUI
         return 1
     }
 
@@ -232,7 +224,6 @@ struct CarouselView<Content: View>: View {
     }
 }
 
-// Simplified horizontal scroll carousel
 struct HorizontalCarousel<Content: View>: View {
     let content: Content
     let itemWidth: CGFloat
@@ -262,7 +253,6 @@ struct HorizontalCarousel<Content: View>: View {
     }
 }
 
-// Paginated grid carousel
 struct PaginatedCarousel<Content: View>: View {
     let content: Content
     let itemsPerPage: Int

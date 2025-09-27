@@ -8,12 +8,13 @@ struct MangaDashboardView: View {
     private let readingData = MockData.generateReadingManga(count: 4)
 
     var body: some View {
-        AnimatedThemeView(useBackground: true) {
-            ZStack {
-                AnimatedThemeView(useSurface: true)
-                    .ignoresSafeArea()
+        NavigationStack {
+            AnimatedThemeView(useBackground: true) {
+                ZStack {
+                    AnimatedThemeView(useSurface: true)
+                        .ignoresSafeArea()
 
-                ScrollView {
+                    ScrollView {
                     if let selectedCategory = selectedCategory {
                         VStack {
                             CategoryResultsView(
@@ -39,6 +40,7 @@ struct MangaDashboardView: View {
                 }
                 .scrollIndicators(.hidden)
             }
+        }
         }
     }
 

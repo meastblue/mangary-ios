@@ -8,12 +8,13 @@ struct SettingsView: View {
     @StateObject private var themeManager = ThemeManager()
 
     var body: some View {
-        AnimatedThemeView(useBackground: true) {
-            ZStack {
-                AnimatedThemeView(useSurface: true)
-                    .ignoresSafeArea()
+        NavigationStack {
+            AnimatedThemeView(useBackground: true) {
+                ZStack {
+                    AnimatedThemeView(useSurface: true)
+                        .ignoresSafeArea()
 
-                ScrollView {
+                    ScrollView {
                     VStack(spacing: 0) {
                         HeaderView(
                             onNotificationPress: handleNotificationPress,
@@ -44,6 +45,7 @@ struct SettingsView: View {
             }
         } message: {
             Text("Êtes-vous sûr de vouloir vous déconnecter ?")
+        }
         }
     }
 

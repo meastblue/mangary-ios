@@ -1,10 +1,3 @@
-//
-//  Item.swift
-//  mangary
-//
-//  Created by Massinissa Amalou on 23/09/2025.
-//
-
 import Foundation
 import SwiftData
 

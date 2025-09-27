@@ -6,23 +6,27 @@ struct SearchView: View {
     @StateObject private var themeManager = ThemeManager()
 
     var body: some View {
-        AnimatedThemeView(useBackground: true) {
-            ZStack {
-                AnimatedThemeView(useSurface: true)
-                    .ignoresSafeArea()
+        NavigationStack {
+            AnimatedThemeView(useBackground: true) {
+                ZStack {
+                    AnimatedThemeView(useSurface: true)
+                        .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 0) {
-                        renderContent()
+                    ScrollView {
+                        VStack(spacing: 0) {
+                            renderContent()
+                        }
+                        .padding(.bottom, 32)
                     }
-                    .padding(.bottom, 32)
+                    .scrollIndicators(.hidden)
                 }
-                .scrollIndicators(.hidden)
             }
-        }
-        .searchable(text: $searchQuery, prompt: "Rechercher un manga...")
-        .onChange(of: searchQuery) {
-            resetCategoryWhenSearching()
+            .searchable(text: $searchQuery, prompt: "Rechercher un manga...")
+            .searchPresentationToolbarBehavior(.avoidHidingContent)
+            .onChange(of: searchQuery) {
+                resetCategoryWhenSearching()
+            }
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 
@@ -60,16 +64,98 @@ struct CategoriesSectionView: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            SectionView(title: "Catégories populaires") {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
-                    ForEach(MockData.categories, id: \.self) { category in
-                        CategoryButton(
-                            category: category,
-                            onPress: { onCategorySelect(category) }
-                        )
-                    }
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 12) {
+                ForEach(MockData.categories, id: \.self) { category in
+                    CategoryButton(
+                        category: category,
+                        onPress: { onCategorySelect(category) }
+                    )
                 }
-                .padding(.horizontal, 20)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+        }
+    }
+}
+
+struct SearchResultRow: View {
+    let manga: MangaItem
+    let isLast: Bool
+    @StateObject private var themeManager = ThemeManager()
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 16) {
+                AsyncImage(url: URL(string: manga.imageUrl)) { image in
+                    image
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                } placeholder: {
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.2))
+                        .overlay(
+                            Image(systemName: "book.fill")
+                                .foregroundColor(Color("JapanRed").opacity(0.3))
+                        )
+                }
+                .frame(width: 80, height: 110)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+                VStack(alignment: .leading, spacing: 6) {
+                    AnimatedText(
+                        manga.title,
+                        fontSize: 17,
+                        fontWeight: .semibold
+                    )
+
+                    AnimatedText(
+                        "Auteur: Eiichiro Oda",
+                        fontSize: 14,
+                        useSecondaryTextColor: true
+                    )
+
+                    AnimatedText(
+                        "Chapitres: 1089",
+                        fontSize: 14,
+                        useSecondaryTextColor: true
+                    )
+
+                    HStack(spacing: 12) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 12))
+                                .foregroundColor(Color.yellow)
+                            AnimatedText(
+                                "4.8",
+                                fontSize: 14
+                            )
+                        }
+
+                        HStack(spacing: 4) {
+                            Image(systemName: "book.circle")
+                                .font(.system(size: 12))
+                                .foregroundColor(themeManager.secondaryTextColor)
+                            AnimatedText(
+                                "Shonen",
+                                fontSize: 14,
+                                useSecondaryTextColor: true
+                            )
+                        }
+                    }
+                    .padding(.top, 4)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14))
+                    .foregroundColor(themeManager.secondaryTextColor)
+            }
+            .padding(.vertical, 12)
+
+            if !isLast {
+                Rectangle()
+                    .fill(themeManager.borderColor)
+                    .frame(height: 0.5)
             }
         }
     }
@@ -80,7 +166,7 @@ struct SearchResultsView: View {
     @StateObject private var themeManager = ThemeManager()
 
     private var mockResults: [MangaItem] {
-        MockData.generateManga(count: 8).filter { manga in
+        MockData.generateManga(count: 15).filter { manga in
             manga.title.localizedCaseInsensitiveContains(searchQuery)
         }
     }
@@ -119,14 +205,11 @@ struct SearchResultsView: View {
                 .frame(maxWidth: .infinity)
                 .padding(.top, 60)
             } else {
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 2), spacing: 16) {
-                    ForEach(mockResults) { manga in
-                        MangaCard(
-                            title: manga.title,
-                            imageUrl: manga.imageUrl,
-                            width: 160,
-                            height: 200,
-                            onPress: { print("Selected: \(manga.title)") }
+                LazyVStack(spacing: 0) {
+                    ForEach(Array(mockResults.enumerated()), id: \.element.id) { index, manga in
+                        SearchResultRow(
+                            manga: manga,
+                            isLast: index == mockResults.count - 1
                         )
                     }
                 }
